@@ -29,6 +29,8 @@
 <script>
 import FormTag from '../components/forms/FormTag.vue';
 import TextInput from '../components/forms/TextInput.vue';
+import { store } from '../components/store.js';
+
 export default {
     name: "LoginScreen",
     components: {
@@ -39,11 +41,32 @@ export default {
         return {
             email: "",
             password: "",
+            store
         }
     },
     methods: {
         submitHandler() {
             console.log("fired")
+            const payload = {
+                email: this.email,
+                password: this.password,
+            }
+
+            const requestOptions = {
+                method: "POST",
+                body: JSON.stringify(payload)
+            }
+
+            fetch("http://localhost:8081/users/login", requestOptions)
+            .then(response => response.json())
+            .then(response => {
+                if (response.error) {
+                    console.log('error', response.message)
+                } else {
+                    console.log("Token:", response.data.token.token)
+                    store.token = response.data.token.token;
+                }
+            })
         }
     }
 }
