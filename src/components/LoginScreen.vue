@@ -32,6 +32,7 @@ import TextInput from '../components/forms/TextInput.vue';
 import { store } from '../components/store.js';
 import router from '../router/index.js';
 import notie from 'notie';
+import Security from './security.js';
 
 export default {
     name: "LoginScreen",
@@ -48,22 +49,15 @@ export default {
     },
     methods: {
         submitHandler() {
-            console.log("fired")
             const payload = {
                 email: this.email,
                 password: this.password,
             }
 
-            const requestOptions = {
-                method: "POST",
-                body: JSON.stringify(payload)
-            }
-
-            fetch("http://localhost:8081/users/login", requestOptions)
+            fetch(process.env.VUE_APP_API_URL + "/users/login", Security.requestOptions(payload))
             .then(response => response.json())
             .then(response => {
                 if (response.error) {
-                    console.log('error', response.message);
                     notie.alert({
                         type: 'error',
                         text: response.message,
@@ -71,7 +65,6 @@ export default {
                         // position: 'bottom,
                     })
                 } else {
-                    console.log("Token:", response.data.token.token)
                     store.token = response.data.token.token;
 
                     store.user = {

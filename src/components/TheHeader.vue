@@ -10,6 +10,29 @@
                     <li class="nav-item">
                         <router-link class="nav-link active" aria-current="page" to="/">Home</router-link>
                     </li>
+
+                    <li class="nav-item">
+                        <router-link class="nav-link active" aria-current="page" to="/books">Books</router-link>
+                    </li>
+
+                    <li v-if="store.token !== ''" class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="navBarDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
+                        <ul class="dropdown-menu" aria-labelledby="navBarDropDown">
+                            <li>
+                                <router-link class="dropdown-item" to="/admin/users">Manage users</router-link>
+                            </li>
+                            <li>
+                                <router-link class="dropdown-item" to="/admin/users/0">Add user</router-link>
+                            </li>
+                            <li>
+                                <router-link class="dropdown-item" to="/admin/books">Manage books</router-link>
+                            </li>
+                            <li>
+                                <router-link class="dropdown-item" to="/admin/books/0">Add book</router-link>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
                         <router-link v-if="store.token == ''" class="nav-link" to="/login">Login</router-link>
                         <a href="javascript:void(0);" v-else class="nav-link" @click="logout">Logout</a>
@@ -27,6 +50,8 @@
 <script>
 import { store } from '../components/store.js';
 import router from '../router/index.js';
+import Security from './security.js';
+
 export default {
     data() {
         return {
@@ -39,12 +64,7 @@ export default {
                 token: store.token
             }
 
-            const requestOptions = { 
-                method: "POST",
-                body: JSON.stringify(payload)
-            }
-
-            fetch("http://localhost:8081/users/logout", requestOptions)
+            fetch(process.env.VUE_APP_API_URL + "/users/logout", Security.requestOptions(payload))
             .then(response => response.json())
             .then(response => {
                 if (response.error) {

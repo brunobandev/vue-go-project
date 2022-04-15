@@ -44,6 +44,27 @@ export default {
         email: cookieData.user.email,
       }
     }
+  },
+  mounted() {
+    const payload = {
+      foo: "bar"
+    }
+
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Authorization', 'Bearer ' + store.token);
+
+    const requestOptions = {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: headers,
+    }
+
+    fetch("http://localhost:8081/admin/foo", requestOptions)
+    .then(response => response.json())
+    .then((data) => {
+      console.log(data);
+    })
   }
 }
 </script>
