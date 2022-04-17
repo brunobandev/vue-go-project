@@ -1,7 +1,7 @@
 <template>
   <TheHeader />
   <div>
-    <router-view />
+    <router-view :key="componentKey" @success="success" @error="error" @warning="warning" @forceUpdate="forceUpdate" />
   </div>
   <TheFooter />
 </template>
@@ -10,6 +10,7 @@
 import TheHeader from './components/TheHeader.vue'
 import TheFooter from './components/TheFooter.vue'
 import { store } from './components/store.js';
+import notie from 'notie';
 
 const getCookie = (name) => {
   return document.cookie.split("; ").reduce((r, v) => {
@@ -26,7 +27,8 @@ export default {
   },
   data() {
     return {
-      store
+      store,
+      componentKey: 0,
     }
   },
   beforeMount() {
@@ -45,26 +47,28 @@ export default {
       }
     }
   },
-  mounted() {
-    const payload = {
-      foo: "bar"
+  methods: {
+    success(msg) {
+      notie.alert({
+        type: "success",
+        text: msg
+      })
+    },
+    error(msg) {
+      notie.alert({
+        type: "error",
+        text: msg
+      })
+    },
+    warning(msg) {
+      notie.alert({
+        type: "warning",
+        text: msg
+      })
+    },
+    forceUpdate() {
+      this.componentKey += 1;
     }
-
-    const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    headers.append('Authorization', 'Bearer ' + store.token);
-
-    const requestOptions = {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: headers,
-    }
-
-    fetch("http://localhost:8081/admin/foo", requestOptions)
-    .then(response => response.json())
-    .then((data) => {
-      console.log(data);
-    })
   }
 }
 </script>
